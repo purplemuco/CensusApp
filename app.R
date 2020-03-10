@@ -1,4 +1,3 @@
-
 library(maps)
 library(mapproj)
 
@@ -26,13 +25,20 @@ ui <- fluidPage(
                   min = 0, max = 100, value = c(0, 100))
     ),
     
-    mainPanel(plotOutput("map")
+    mainPanel(
+      textOutput("selected_var"),
+      plotOutput("map")
+              
     )
   )
 )
 
 
 server <- function(input, output) {
+  
+  output$selected_var <- renderText({ 
+    paste("You have selected", input$var)
+  })
   
   output$map <- renderPlot({
     data <- switch(input$var, 
@@ -52,8 +58,8 @@ server <- function(input, output) {
                      "Percent Black" = "% Black",
                      "Percent Hispanic" = "% Hispanic",
                      "Percent Asian" = "% Asian")
-    
-    percent_map(data, color, legend, input$range[1], input$range[2])
+
+    percent_map(data, color, legend, max=input$range[2], min=input$range[1])
   })
 }
 
